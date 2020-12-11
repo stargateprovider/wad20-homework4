@@ -48,7 +48,7 @@ router.put('/:postId/likes', authorize, (request, response) => {
     // Endpoint for current user to like a post
 
     let userId = request.currentUser.id;
-    let postId = request.body.postId;
+    let postId = request.body;
 
     PostModel.like(userId, postId, (rows) => {
         response.status(204).json(rows);
@@ -58,6 +58,13 @@ router.put('/:postId/likes', authorize, (request, response) => {
 router.delete('/:postId/likes', authorize, (request, response) => {
 
     // Endpoint for current user to unlike a post
+
+    let userId = request.currentUser.id;
+    let postId = request.body;
+
+    PostModel.unlike(userId, postId, (rows) => {
+        response.status(204).json(rows);
+    });
 
 });
 
