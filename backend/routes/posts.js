@@ -12,7 +12,7 @@ router.get('/', authorize, (request, response) => {
 
         if (postIds.length) {
             PostModel.getByIds(postIds, request.currentUser.id, (posts) => {
-                response.status(201).json(posts)
+                response.status(201).json(posts);
             });
             return;
         }
@@ -48,7 +48,7 @@ router.put('/:postId/likes', authorize, (request, response) => {
     // Endpoint for current user to like a post
 
     let userId = request.currentUser.id;
-    let postId = request.body;
+    let postId = request.params.postId;
 
     PostModel.like(userId, postId, (rows) => {
         response.status(204).json(rows);
@@ -60,7 +60,7 @@ router.delete('/:postId/likes', authorize, (request, response) => {
     // Endpoint for current user to unlike a post
 
     let userId = request.currentUser.id;
-    let postId = request.body;
+    let postId = request.params.postId;
 
     PostModel.unlike(userId, postId, (rows) => {
         response.status(204).json(rows);
