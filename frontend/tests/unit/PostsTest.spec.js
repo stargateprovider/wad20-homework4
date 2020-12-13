@@ -2,6 +2,7 @@ import {mount, createLocalVue} from '@vue/test-utils'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import Posts from "../../src/components/Posts.vue";
+import moment from 'moment'
 
 const localVue = createLocalVue();
 
@@ -91,16 +92,35 @@ const testData = [
 
 //Mock axios.get method that our Component calls in mounted event
 jest.mock("axios", () => ({
-    get: () => Promise.resolve({
-        data: testData
-    })
+    get: () => Promise.resolve({data: testData})
 }));
 
 describe('Posts', () => {
-
     const wrapper = mount(Posts, {router, store, localVue});
 
-    it('1 == 1', function () {
-        expect(true).toBe(true)
+    it("should render as many posts as defined in testData", () => {
+        expect(wrapper.findAll(".post").length).toBe(testData.length)
+    });
+
+    it("should render each post's media according to its type", () => {
+        const foundPosts = wrapper.findAll(".post");
+
+        for (var i = 0; i < foundPosts.length; i++) {
+            let media = foundPosts.at(i).find(".post-image");
+
+            if (!testData[i].media) {
+                expect(media.exists()).toBe(false);
+            } else if (testData[i].media.type == "image") {
+                expect(media.find("img").exists()).toBe(true);
+            } else if (testData[i].media.type == "video") {
+                expect(media.find("video").exists()).toBe(true);
+            }
+        }
+    });
+
+    it("should render post dates in the correct format", () => {
+        wrapper.findAll(".post-author>small:last-child").filter(item =>
+            expect(moment(item.text(), 'LLLL', true).isValid()).toBe(true)
+        );
     });
 });
